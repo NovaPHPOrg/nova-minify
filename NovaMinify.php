@@ -3,6 +3,7 @@
 namespace nova\plugin\minify;
 
 use Exception;
+use nova\framework\App;
 use nova\framework\event\EventManager;
 use nova\framework\log\Logger;
 
@@ -15,6 +16,7 @@ class NovaMinify
 
     public function __construct()
     {
+        if (App::getInstance()->debug)return;
         EventManager::addListener("response.static.before", function ($event, &$file) {
             $name = str_replace(ROOT_PATH . '/app', '', $file);
             if (str_ends_with($name, ".min.js") || str_ends_with($name, ".min.css")) {
