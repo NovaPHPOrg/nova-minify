@@ -132,6 +132,7 @@ class JsMinify
                 $jshrink->clean();
                 unset($jshrink);
             }
+
             throw $e;
         }
     }
@@ -206,7 +207,7 @@ class JsMinify
      */
     protected function loop()
     {
-        while ($this->a !== false && !is_null($this->a) && $this->a !== '') {
+        while (!is_null($this->a) && $this->a !== '') {
             switch ($this->a) {
                 // new lines
                 case "\r":
@@ -282,7 +283,7 @@ class JsMinify
                     $last_token = $this->last_char;
                 }
 
-                if (strpos($valid_tokens, $last_token) !== false) {
+                if (str_contains($valid_tokens, $last_token)) {
                     // Regex can appear unquoted after these symbols
                     $this->saveRegex();
                 } else if ($this->endsInKeyword()) {
@@ -391,14 +392,14 @@ class JsMinify
      * @return string            Next 'real' character to be processed.
      * @throws \RuntimeException
      */
-    protected function getReal()
+    protected function getReal():string
     {
         $startIndex = $this->index;
         $char = $this->getChar();
 
         // Check to see if we're potentially in a comment
         if ($char !== '/') {
-            return $char;
+            return (string)$char;
         }
 
         $this->c = $this->getChar();
@@ -413,7 +414,7 @@ class JsMinify
             return $this->getReal();
         }
 
-        return $char;
+        return (string)$char;
     }
 
     /**

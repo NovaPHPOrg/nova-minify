@@ -6,7 +6,7 @@ namespace nova\plugin\minify;
 use Exception;
 use nova\framework\App;
 use nova\framework\event\EventManager;
-use nova\framework\log\Logger;
+use function nova\framework\dump;
 
 class NovaMinify
 {
@@ -17,7 +17,7 @@ class NovaMinify
 
     public function __construct()
     {
-        if (App::getInstance()->debug)return;
+       // if (App::getInstance()->debug)return;
         EventManager::addListener("response.static.before", function ($event, &$file) {
             $name = str_replace(ROOT_PATH . '/app', '', $file);
             if (str_ends_with($name, ".min.js") || str_ends_with($name, ".min.css")) {
@@ -53,16 +53,19 @@ class NovaMinify
                 return '<' . $matches[1] . ' style=' . $matches[2] . $this->minify_css($matches[3]) . $matches[2];
             }, $input);
         }
+
         if(str_contains($input, '</style>')) {
             $input = preg_replace_callback('#<style(.*?)>(.*?)</style>#is', function($matches) {
                 return '<style' . $matches[1] .'>'. $this->minify_css($matches[2]) . '</style>';
             }, $input);
         }
+
         if(str_contains($input, '</script>')) {
             $input = preg_replace_callback('#<script(.*?)>(.*?)</script>#is', function($matches) {
                 return '<script' . $matches[1] .'>'. $this->minify_js($matches[2]) . '</script>';
             }, $input);
         }
+
 
         return preg_replace(
             array(
