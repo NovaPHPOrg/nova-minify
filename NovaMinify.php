@@ -4,9 +4,7 @@ declare(strict_types=1);
 namespace nova\plugin\minify;
 
 use Exception;
-use nova\framework\App;
 use nova\framework\event\EventManager;
-use function nova\framework\dump;
 
 class NovaMinify
 {
@@ -111,7 +109,7 @@ class NovaMinify
                 // Remove unused white-space(s)
                 '#("(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\'|\/\*(?>.*?\*\/))|\s*+;\s*+(})\s*+|\s*+([*$~^|]?+=|[{};,>~]|\s(?![0-9\.])|!important\b)\s*+|([[(:])\s++|\s++([])])|\s++(:)\s*+(?!(?>[^{}"\']++|"(?:[^"\\\]++|\\\.)*+"|\'(?:[^\'\\\\]++|\\\.)*+\')*+{)|^\s++|\s++\z|(\s)\s+#si',
                 // Replace `0(cm|em|ex|in|mm|pc|pt|px|vh|vw|%)` with `0`
-                '#(?<=[\s:])(0)(cm|em|ex|in|mm|pc|pt|px|vh|vw|%)#si',
+                //  '#(?<=[\s:])(0)(cm|em|ex|in|mm|pc|pt|px|vh|vw|%)#si',
                 // Replace `:0 0 0 0` with `:0`
                 '#:(0\s+0|0\s+0\s+0\s+0)(?=[;\}]|\!important)#i',
                 // Replace `background-position:0` with `background-position:0 0`
@@ -132,7 +130,7 @@ class NovaMinify
                 '$1',
                 '$1$2$3$4$5$6$7',
                 '$1',
-                ':0',
+                //':0',
                 '$1:0 0',
                 '.$1',
                 '$1$3',
