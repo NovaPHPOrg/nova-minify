@@ -41,6 +41,15 @@ class NovaMinify
     // HTML Minifier
     function minify_html($input) {
         if(trim($input) === "") return $input;
+
+        // 保存pre标签内容
+        $pre_blocks = [];
+        $input = preg_replace_callback('/<pre\b[^>]*>(.*?)<\/pre>/is', function ($matches) use (&$pre_blocks) {
+            $placeholder = '<[PRE_PLACEHOLDER_' . count($pre_blocks) . ']>';
+            $pre_blocks[] = $matches[0];
+            return $placeholder;
+        }, $input);
+
         // Remove extra white-space(s) between HTML attribute(s)
         $input = preg_replace_callback('#<([^\/\s<>!]+)(?:\s+([^<>]*?)\s*|\s*)(\/?)>#s', function($matches) {
             return '<' . $matches[1] . preg_replace('#([^\s=]+)(\=([\'"]?)(.*?)\3)?(\s+|$)#s', ' $1$2', $matches[2]) . $matches[3] . '>';
@@ -65,7 +74,7 @@ class NovaMinify
         }
 
 
-        return preg_replace(
+        $input = preg_replace(
             array(
                 // t = text
                 // o = tag open
@@ -97,6 +106,13 @@ class NovaMinify
                 ""
             ),
             $input);
+
+        // 还原pre标签内容
+        foreach ($pre_blocks as $i => $block) {
+            $input = str_replace('<[PRE_PLACEHOLDER_' . $i . ']>', $block, $input);
+        }
+
+        return $input;
     }
 
 // CSS Minifier => http://ideone.com/Q5USEF + improvement(s)
