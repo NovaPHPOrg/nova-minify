@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2025. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
  * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
@@ -16,14 +17,14 @@ use nova\framework\event\EventManager;
 
 class NovaMinify
 {
-   static  function register(): void
+    public static function register(): void
     {
         new NovaMinify();
     }
 
     public function __construct()
     {
-       // if (App::getInstance()->debug)return;
+        // if (App::getInstance()->debug)return;
         EventManager::addListener("response.static.before", function ($event, &$file) {
             $name = str_replace(ROOT_PATH . '/app', '', $file);
             if (str_ends_with($name, ".min.js") || str_ends_with($name, ".min.css")) {
@@ -47,8 +48,11 @@ class NovaMinify
     }
 
     // HTML Minifier
-    function minify_html($input) {
-        if(trim($input) === "") return $input;
+    public function minify_html($input)
+    {
+        if (trim($input) === "") {
+            return $input;
+        }
 
         // 保存pre标签内容
         $pre_blocks = [];
@@ -59,28 +63,27 @@ class NovaMinify
         }, $input);
 
         // Remove extra white-space(s) between HTML attribute(s)
-        $input = preg_replace_callback('#<([^\/\s<>!]+)(?:\s+([^<>]*?)\s*|\s*)(\/?)>#s', function($matches) {
+        $input = preg_replace_callback('#<([^\/\s<>!]+)(?:\s+([^<>]*?)\s*|\s*)(\/?)>#s', function ($matches) {
             return '<' . $matches[1] . preg_replace('#([^\s=]+)(\=([\'"]?)(.*?)\3)?(\s+|$)#s', ' $1$2', $matches[2]) . $matches[3] . '>';
         }, str_replace("\r", "", $input));
         // Minify inline CSS declaration(s)
-        if(str_contains($input, ' style=')) {
-            $input = preg_replace_callback('#<([^<]+?)\s+style=([\'"])(.*?)\2(?=[\/\s>])#s', function($matches) {
+        if (str_contains($input, ' style=')) {
+            $input = preg_replace_callback('#<([^<]+?)\s+style=([\'"])(.*?)\2(?=[\/\s>])#s', function ($matches) {
                 return '<' . $matches[1] . ' style=' . $matches[2] . $this->minify_css($matches[3]) . $matches[2];
             }, $input);
         }
 
-        if(str_contains($input, '</style>')) {
-            $input = preg_replace_callback('#<style(.*?)>(.*?)</style>#is', function($matches) {
+        if (str_contains($input, '</style>')) {
+            $input = preg_replace_callback('#<style(.*?)>(.*?)</style>#is', function ($matches) {
                 return '<style' . $matches[1] .'>'. $this->minify_css($matches[2]) . '</style>';
             }, $input);
         }
 
-        if(str_contains($input, '</script>')) {
-            $input = preg_replace_callback('#<script(.*?)>(.*?)</script>#is', function($matches) {
+        if (str_contains($input, '</script>')) {
+            $input = preg_replace_callback('#<script(.*?)>(.*?)</script>#is', function ($matches) {
                 return '<script' . $matches[1] .'>'. $this->minify_js($matches[2]) . '</script>';
             }, $input);
         }
-
 
         $input = preg_replace(
             array(
@@ -113,7 +116,8 @@ class NovaMinify
                 '$1',
                 ""
             ),
-            $input);
+            $input
+        );
 
         // 还原pre标签内容
         foreach ($pre_blocks as $i => $block) {
@@ -123,9 +127,12 @@ class NovaMinify
         return $input;
     }
 
-// CSS Minifier => http://ideone.com/Q5USEF + improvement(s)
-    function minify_css($input) {
-        if(trim($input) === "") return $input;
+    // CSS Minifier => http://ideone.com/Q5USEF + improvement(s)
+    public function minify_css($input)
+    {
+        if (trim($input) === "") {
+            return $input;
+        }
         return preg_replace(
             array(
                 // Remove comment(s)
@@ -163,16 +170,20 @@ class NovaMinify
                 '$1:0',
                 '$1$2'
             ),
-            $input);
+            $input
+        );
     }
 
-// JavaScript Minifier
+    // JavaScript Minifier
 
     /**
      * @throws Exception
      */
-    function minify_js($input) {
-        if(trim($input) === "") return $input;
+    public function minify_js($input)
+    {
+        if (trim($input) === "") {
+            return $input;
+        }
         return JsMinify::minify($input);
     }
 }
