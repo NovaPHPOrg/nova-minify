@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 return [
     "config" => [
-        "framework.start" => [
+        "framework_start" => [
             "nova\\plugin\\minify\\NovaMinify",
         ]
     ]
