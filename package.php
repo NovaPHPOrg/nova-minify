@@ -15,5 +15,8 @@ return [
         "framework_start" => [
             "nova\\plugin\\minify\\NovaMinify",
         ]
+    ],
+    "require" => [
+        "tpl"
     ]
 ];
