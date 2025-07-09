@@ -14,6 +14,7 @@ namespace nova\plugin\minify;
 
 use Exception;
 use nova\framework\event\EventManager;
+use function nova\framework\dump;
 
 class NovaMinify
 {
@@ -48,10 +49,10 @@ class NovaMinify
     }
 
     // HTML Minifier
-    public function minify_html($input)
+    public function minify_html($rawInput)
     {
-        if (trim($input) === "") {
-            return $input;
+        if (trim($rawInput) === "") {
+            return $rawInput;
         }
 
         // 保存pre标签内容
@@ -60,7 +61,7 @@ class NovaMinify
             $placeholder = '<[PRE_PLACEHOLDER_' . count($pre_blocks) . ']>';
             $pre_blocks[] = $matches[0];
             return $placeholder;
-        }, $input);
+        }, $rawInput);
 
         // Remove extra white-space(s) between HTML attribute(s)
         $input = preg_replace_callback('#<([^\/\s<>!]+)(?:\s+([^<>]*?)\s*|\s*)(\/?)>#s', function ($matches) {
@@ -119,6 +120,7 @@ class NovaMinify
             $input
         );
 
+        if ($input == null) return $rawInput;
         // 还原pre标签内容
         foreach ($pre_blocks as $i => $block) {
             $input = str_replace('<[PRE_PLACEHOLDER_' . $i . ']>', $block, $input);
