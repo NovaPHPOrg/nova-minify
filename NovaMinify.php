@@ -14,7 +14,6 @@ namespace nova\plugin\minify;
 
 use Exception;
 use nova\framework\event\EventManager;
-use function nova\framework\dump;
 
 class NovaMinify
 {
@@ -120,7 +119,9 @@ class NovaMinify
             $input
         );
 
-        if ($input == null) return $rawInput;
+        if ($input == null) {
+            return $rawInput;
+        }
         // 还原pre标签内容
         foreach ($pre_blocks as $i => $block) {
             $input = str_replace('<[PRE_PLACEHOLDER_' . $i . ']>', $block, $input);
